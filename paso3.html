@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List con Vue 3</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <style>
+        /* body */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        /* Contenedor para el input y el botón */
+        .input-container {
+            display: flex; /* Hace que el input y el botón estén en la misma línea */
+            gap: 10px; /* Espacio entre el input y el botón */
+            justify-content: center; /* Centra los elementos */
+        }
+
+        /* Estilo del input */
+        input {
+            flex: 1; /* Hace que el input ocupe el espacio disponible */
+            padding: 10px;
+            border: 1px solid #ccc; /* Borde gris claro */
+            border-radius: 20px; /* Bordes redondeados */
+            background-color: #f0f0f0; /* Fondo gris claro */
+            color: #333; /* Texto en gris oscuro */
+            outline: none; /* Elimina el borde azul al hacer clic */
+            width: 100%; /* Asegura que ocupe el ancho disponible */
+        }
+
+        /* Estilo del botón */
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 20px; /* Bordes redondeados */
+            background-color: #28a745; /* Color verde */
+            color: white; /* Texto en blanco */
+            cursor: pointer;
+            transition: background 0.3s ease; /* Efecto al pasar el mouse */
+        }
+
+        /* Cambio de color al pasar el mouse */
+        button:hover {
+            background-color: #218838; /* Verde más oscuro al pasar el mouse */
+        }
+
+        /* Lista de tareas */
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        /* Estilo de cada tarea */
+        li {
+            background: #f4f4f4;
+            padding: 10px;
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 10px; /* Bordes redondeados */
+        }
+
+        /* Alineación del checkbox y el texto */
+        .task-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Estilo para tareas completadas */
+        .completada {
+            text-decoration: line-through;
+            color: gray;
+        }
+
+        /* Botón de eliminar */
+        .eliminar {
+            background: red;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+            border-radius: 5px; /* Bordes redondeados */
+        }
+
+    </style>
+
+</head>
+<body>
+
+    <!-- Contenedor principal -->
+    <div id="app">
+        <!-- Contenedor del título -->
+        <h2>Lista de Tareas</h2>
+
+        <!-- Contenedor del input y botón -->
+        <div class="input-container">
+            <input 
+                v-model="state.nuevaTarea" 
+                @keyup.enter="agregarTarea" 
+                placeholder="Agregar tarea"
+            >
+            <button @click="agregarTarea">Agregar</button>
+        </div>
+        
+        <!-- Lista de tareas -->
+        <ul>
+            <li v-for="(tarea, index) in state.tareas" :key="index">
+                <div class="task-content">
+                    <input type="checkbox" v-model="tarea.completada">
+                    <span :class="{ completada: tarea.completada }">{{ tarea.texto }}</span>
+                </div>
+                <button class="eliminar" @click="eliminarTarea(index)">X</button>
+            </li>
+        </ul>
+    </div>
+
+    <script>
+        const { createApp, reactive } = Vue;
+    
+        createApp({
+            setup() {
+                // Estado reactivo
+                const state = reactive({
+                    nuevaTarea: '',
+                    tareas: []
+                });
+    
+                // Agregar una tarea
+                const agregarTarea = () => {
+                    if (state.nuevaTarea.trim() !== '') {
+                        state.tareas.push({ 
+                            texto: state.nuevaTarea.trim(), 
+                            completada: false 
+                        });
+                        state.nuevaTarea = ''; // Limpiar el input
+                    }
+                };
+    
+                // Eliminar una tarea
+                const eliminarTarea = (index) => {
+                    state.tareas.splice(index, 1);
+                };
+    
+                return { state, agregarTarea, eliminarTarea };
+            }
+        }).mount("#app");
+    </script>
+
+</body>
+</html>
